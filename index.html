@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Vicente Food - Servicio de Catering exclusivo y Viandas Congeladas caseras premium de alta calidad listas para disfrutar.">
+    <title>Vicente Food | Catering & Viandas Congeladas Premium</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- Header / Navegación -->
+    <header class="main-header" id="header">
+        <div class="container header-container">
+            <a href="#" class="logo">
+                <span class="logo-accent">Vicente</span>Food
+            </a>
+
+            <nav class="nav-menu" id="navMenu">
+                <a href="#inicio" class="nav-link active">Inicio</a>
+                <a href="#catering" class="nav-link">Catering</a>
+                <a href="viandas.html" class="nav-link">Viandas Congeladas</a>
+            </nav>
+
+            <div class="header-actions">
+                <button class="cart-toggle-btn" id="cartToggleBtn" aria-label="Ver carrito">
+                    <i data-lucide="shopping-cart"></i>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menú">
+                    <i data-lucide="menu" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="inicio">
+        <div class="hero-overlay"></div>
+        <div class="container hero-container">
+            <div class="hero-content">
+                <span class="hero-tagline">Experiencias Gastronómicas Únicas</span>
+                <h1 class="hero-title">El sabor de lo casero, con la distinción de lo gourmet.</h1>
+                <p class="hero-description">
+                    Descubre nuestro exclusivo servicio de catering para eventos inolvidables, o disfruta en casa de
+                    nuestras viandas congeladas premium, elaboradas con ingredientes frescos y sin conservantes.
+                </p>
+                <div class="hero-actions-btns">
+                    <a href="viandas.html" class="btn btn-primary">Ver menú de Viandas</a>
+                    <a href="#catering" class="btn btn-secondary">Conocer Catering</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catering Section -->
+    <section class="catering-section" id="catering">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Servicio de Catering</span>
+                <h2 class="section-title">Hacemos de tu evento un momento memorable</h2>
+                <div class="section-divider"></div>
+            </div>
+
+            <div class="catering-grid">
+                <div class="catering-image-side">
+                    <img src="assets/hero-catering.png" alt="Servicio de Catering Vicente Food"
+                        class="img-responsive rounded shadow img-hover-zoom">
+                </div>
+                <div class="catering-text-side">
+                    <h3>Gastronomía sofisticada, atención impecable</h3>
+                    <p class="catering-p">
+                        En <strong>Vicente Food</strong> diseñamos propuestas gastronómicas exclusivas para eventos
+                        corporativos, casamientos, cumpleaños y reuniones íntimas. Cuidamos cada detalle: desde la
+                        selección de materias primas hasta una presentación artística que sorprenderá a tus invitados.
+                    </p>
+
+                    <ul class="catering-features">
+                        <li>
+                            <div class="feature-icon-wrapper"><i data-lucide="check"></i></div>
+                            <div>
+                                <strong>Finger Food y Cocktail:</strong> Bocados gourmet fríos y calientes diseñados
+                                para recepciones dinámicas.
+                            </div>
+                        </li>
+                        <li>
+                            <div class="feature-icon-wrapper"><i data-lucide="check"></i></div>
+                            <div>
+                                <strong>Platos Principales y Estaciones:</strong> Cocina de autor adaptada a la temática
+                                de tu evento.
+                            </div>
+                        </li>
+                        <li>
+                            <div class="feature-icon-wrapper"><i data-lucide="check"></i></div>
+                            <div>
+                                <strong>Opciones Especiales:</strong> Menús diseñados para comensales celíacos,
+                                vegetarianos y veganos.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Catering Booking Form -->
+            <div class="catering-form-container card">
+                <div class="form-intro">
+                    <i data-lucide="calendar-range" class="form-intro-icon"></i>
+                    <h3>¿Estás planificando un evento?</h3>
+                    <p>Completa el formulario y nos contactaremos a la brevedad para enviarte una propuesta
+                        personalizada.</p>
+                </div>
+
+                <form id="cateringForm" class="catering-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="cateringName">Nombre y Apellido *</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="user" class="input-icon"></i>
+                                <input type="text" id="cateringName" required placeholder="Ej: Juan Pérez">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cateringPhone">Teléfono de Contacto *</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="phone" class="input-icon"></i>
+                                <input type="tel" id="cateringPhone" required placeholder="Ej: 11 2345 6789">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cateringDate">Fecha Tentativa *</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="calendar" class="input-icon"></i>
+                                <input type="date" id="cateringDate" required min="2026-06-03">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cateringGuests">Número de Invitados *</label>
+                            <div class="input-wrapper">
+                                <i data-lucide="users" class="input-icon"></i>
+                                <input type="number" id="cateringGuests" required min="10"
+                                    placeholder="Mínimo 10 personas">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="cateringDetails">Detalles del Evento e Ideas Gastronómicas *</label>
+                        <div class="input-wrapper">
+                            <textarea id="cateringDetails" required
+                                placeholder="Cuéntanos sobre tu evento. ¿Qué tipo de comida te gustaría? ¿Alguna restricción alimentaria o preferencia?"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions-row">
+                        <button type="button" id="btnCateringWhatsApp" class="btn btn-whatsapp flex-center">
+                            <i data-lucide="send" class="btn-icon"></i> Consultar por WhatsApp
+                        </button>
+                        <button type="button" id="btnCateringEmail" class="btn btn-outline flex-center">
+                            <i data-lucide="mail" class="btn-icon"></i> Consultar por Email
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Viandas Section -->
+    <section class="viandas-section" id="viandas">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Viandas Congeladas</span>
+                <h2 class="section-title">Comida de Hogar, Lista en Minutos</h2>
+                <p class="section-intro-text">
+                    Nuestras viandas se cocinan con ingredientes frescos de estación y se congelan mediante un proceso
+                    rápido que preserva texturas, sabores y nutrientes sin añadir aditivos ni conservantes.
+                </p>
+                <div class="section-divider"></div>
+            </div>
+
+            <!-- Filtros de Viandas -->
+            <div class="viandas-filters">
+                <button class="filter-btn active" data-filter="all">Todas</button>
+                <button class="filter-btn" data-filter="meat">Carnes</button>
+                <button class="filter-btn" data-filter="veggie">Vegetarianas</button>
+            </div>
+
+            <!-- Grid de Viandas -->
+            <div class="viandas-grid" id="viandasGrid">
+                <!-- Se cargará dinámicamente con JavaScript -->
+            </div>
+
+            <!-- <div class="viandas-highlight-box">
+                <div class="highlight-item">
+                    <i data-lucide="snowflake" class="highlight-icon"></i>
+                    <h4>Congelado Inteligente</h4>
+                    <p>Directo del freezer al microondas u horno.</p>
+                </div>
+                <div class="highlight-item">
+                    <i data-lucide="shield-check" class="highlight-icon"></i>
+                    <h4>Ingredientes Naturales</h4>
+                    <p>Sin aditivos químicos ni exceso de sodio.</p>
+                </div>
+                <div class="highlight-item">
+                    <i data-lucide="clock-3" class="highlight-icon"></i>
+                    <h4>Sabor de Hogar</h4>
+                    <p>Cocinado a fuego lento con recetas caseras.</p>
+                </div> -->
+        </div>
+        </div>
+    </section>
+
+    <!-- Shopping Cart Drawer (Sidebar de Carrito) -->
+    <div class="cart-drawer-overlay" id="cartOverlay"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h3>Tu Carrito</h3>
+            <button class="close-btn" id="cartCloseBtn" aria-label="Cerrar carrito">
+                <i data-lucide="x"></i>
+            </button>
+        </div>
+
+        <div class="cart-body" id="cartItemsContainer">
+            <!-- Items de carrito cargados dinámicamente -->
+        </div>
+
+        <div class="cart-footer">
+            <div class="cart-total-row">
+                <span>Total:</span>
+                <span class="cart-total-price" id="cartTotalPrice">$0</span>
+            </div>
+            <button class="btn btn-primary btn-block" id="btnCheckoutInit" disabled>
+                Finalizar Compra
+            </button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div class="modal-overlay" id="checkoutModalOverlay">
+        <div class="modal-container card">
+            <div class="modal-header">
+                <h3>Finalizar Pedido de Viandas</h3>
+                <button class="close-btn" id="checkoutCloseBtn" aria-label="Cerrar modal">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="checkout-grid">
+                    <!-- Formulario de Datos -->
+                    <div class="checkout-form-side">
+                        <h4>1. Datos de Entrega</h4>
+                        <form id="checkoutForm">
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="checkoutName">Nombre *</label>
+                                    <input type="text" id="checkoutName" required placeholder="Ej: Vicente">
+                                </div>
+                                <div class="form-group">
+                                    <label for="checkoutLastName">Apellido *</label>
+                                    <input type="text" id="checkoutLastName" required placeholder="Ej: Rossi">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="checkoutPhone">Celular / Teléfono *</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="phone" class="input-icon"></i>
+                                    <input type="tel" id="checkoutPhone" required
+                                        placeholder="Ej: 11 2345 6789 (Sin el 0 ni el 15)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="checkoutAddress">Dirección de Entrega *</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="map-pin" class="input-icon"></i>
+                                    <input type="text" id="checkoutAddress" required
+                                        placeholder="Ej: Av. del Libertador 1234, CABA">
+                                </div>
+                            </div>
+
+                            <h4 class="mt-2">2. Medio de Pago</h4>
+                            <div class="payment-selector">
+                                <label class="payment-option active">
+                                    <input type="radio" name="paymentMethod" value="transferencia" checked>
+                                    <div class="payment-option-content">
+                                        <i data-lucide="wallet"></i>
+                                        <div>
+                                            <strong>Transferencia Bancaria</strong>
+                                            <span>Obtén un 5% de descuento</span>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="mercadopago">
+                                    <div class="payment-option-content">
+                                        <i data-lucide="credit-card"></i>
+                                        <div>
+                                            <strong>Mercado Pago</strong>
+                                            <span>Dinero en cuenta o tarjeta</span>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Resumen del Pedido -->
+                    <div class="checkout-summary-side">
+                        <h4>Resumen del Pedido</h4>
+                        <div class="summary-card">
+                            <div class="summary-items" id="checkoutSummaryItems">
+                                <!-- Cargados dinámicamente -->
+                            </div>
+
+                            <div class="summary-divider"></div>
+
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span id="summarySubtotal">$0</span>
+                            </div>
+                            <div class="summary-row text-success discount-row" id="summaryDiscountRow">
+                                <span>Descuento Transferencia (5%)</span>
+                                <span id="summaryDiscount">-$0</span>
+                            </div>
+                            <div class="summary-row summary-total">
+                                <span>Total a pagar</span>
+                                <span id="summaryTotal">$0</span>
+                            </div>
+                        </div>
+
+                        <!-- Panel de Datos Bancarios (dinámico) -->
+                        <div class="payment-instructions card" id="bankTransferInstructions">
+                            <h5>Datos de Transferencia:</h5>
+                            <p>Realiza la transferencia al siguiente CBU/Alias y envía el comprobante:</p>
+                            <ul>
+                                <li><strong>Banco:</strong> Banco Galicia</li>
+                                <li><strong>CBU:</strong> 0070000000000000000000</li>
+                                <li><strong>Alias:</strong> vicente.food.galicia</li>
+                                <li><strong>Titular:</strong> Vicente Food S.A.</li>
+                            </ul>
+                        </div>
+
+                        <div class="payment-instructions card hidden" id="mercadoPagoInstructions">
+                            <h5>Instrucciones de Mercado Pago:</h5>
+                            <p>Al confirmar el pedido, te enviaremos el link de pago o el código QR correspondiente por
+                                el monto final de su pedido.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="btnConfirmWhatsApp" class="btn btn-whatsapp flex-center btn-block">
+                    <i data-lucide="send" class="btn-icon"></i> Confirmar y enviar por WhatsApp
+                </button>
+                <button type="button" id="btnConfirmEmail" class="btn btn-outline flex-center btn-block mt-1">
+                    <i data-lucide="mail" class="btn-icon"></i> Confirmar y enviar por Email
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="logo text-white">
+                    <span class="logo-accent">Vicente</span>Food
+                </a>
+                <p class="footer-desc mt-1">
+                    Cocina casera de alta gama. Servicios gastronómicos a medida y viandas congeladas listas para comer
+                    sano y sabroso todos los días.
+                </p>
+                <div class="social-links mt-2">
+                    <a href="https://www.instagram.com/vicente.food/" target="_blank"
+                        aria-label="Visítanos en Instagram">
+                        <i class="fa-brands fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-nav">
+                <h4>Enlaces Rápidos</h4>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#catering">Catering</a></li>
+                    <li><a href="#viandas">Viandas Congeladas</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+                <h4>Contacto</h4>
+                <ul>
+                    <li>
+                        <i data-lucide="phone" class="footer-icon"></i>
+                        <span>+54 9 11 2345-6789</span>
+                    </li>
+                    <li>
+                        <i data-lucide="mail" class="footer-icon"></i>
+                        <span>pedidos@vicentefood.com</span>
+                    </li>
+                    <li>
+                        <i data-lucide="clock" class="footer-icon"></i>
+                        <span>Atención de pedidos: Lun a Sáb 9:00 a 19:00 hs</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2026 Vicente Food. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Bundle -->
+    <script src="app.js"></script>
+</body>
+
+</html>
