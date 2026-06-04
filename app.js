@@ -1,8 +1,9 @@
 // Configuración de Envío de Pedidos
 const CONFIG = {
-    whatsappNumber: "5491123456789", // Reemplazar con el número del negocio (código de país + código de área + número)
+    whatsappNumber: "5491150250623", // Reemplazar con el número del negocio
     contactEmail: "pedidos@vicentefood.com",
-    transferDiscount: 0 // Descuento por transferencia
+    transferDiscount: 0, // Descuento por transferencia
+    workerURL: "https://vicentefood-api.tomas-aderosa.workers.dev"
 };
 
 // Estado Global de la Aplicación
@@ -688,10 +689,6 @@ function setupEventListeners() {
     }
 }
 
-/* ==========================================================================
-   PROCESAMIENTO DE FORMULARIOS Y REDIRECCIONES
-   ========================================================================== */
-
 // 1. Procesar Formulario de Catering
 function processCateringSubmission(method) {
     const form = document.getElementById("cateringForm");
@@ -710,8 +707,8 @@ function processCateringSubmission(method) {
         return;
     }
 
-    if (parseInt(guests) < 10) {
-        alert("El servicio de catering requiere un mínimo de 10 personas.");
+    if (parseInt(guests) < 25) {
+        alert("El servicio de catering requiere un mínimo de 25 personas.");
         return;
     }
 
@@ -842,25 +839,15 @@ async function processCheckoutSubmission(method) {
         createdAt: new Date().toISOString()
     };
 
-    try {
-        const response = await fetch(
-            "https://vicentefood-api.tomas-aderosa.workers.dev",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(orderData)
-            }
-        );
-
-        const result = await response.json();
-        console.log(result);
-        // alert("Pedido enviado correctamente.");
-    } catch (error) {
-        console.error(error);
-        alert("Error enviando pedido.");
-    }
+    const savePromise = fetch(CONFIG.workerURL, 
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(orderData)
+        }
+    );
 
     // Enviar por WhatsApp
     if (method === "whatsapp") {
@@ -881,7 +868,7 @@ async function processCheckoutSubmission(method) {
         const whatsappUrl = `https://api.whatsapp.com/send?phone=${CONFIG.whatsappNumber}&text=${encodeURIComponent(textMessage)}`;
         window.open(whatsappUrl, "_blank");
     }
-    // Enviar por Email
+    // Enviar por Email (sacar)
     else {
         const emailSubject = `Nuevo Pedido de Viandas - Vicente Food (${fullName})`;
         let emailBody = `Hola Vicente Food,\n\n` +
@@ -906,10 +893,20 @@ async function processCheckoutSubmission(method) {
         window.location.href = mailtoUrl;
     }
 
+    try {
+        const response = await savePromise;
+        const result = await response.json();
+        console.log(result);
+        alert("Pedido enviado correctamente.");
+    } catch (error) {
+        console.error(error);
+        //alert("Error enviando pedido.");
+    }
+
     // Post-envío: Vaciar carrito y cerrar modales
     clearCart();
     closeCheckoutModal();
-    alert("¡Pedido registrado! Te hemos redirigido para completar la comunicación.");
+    //alert("¡Pedido registrado! Te hemos redirigido para completar la comunicación.");
 }
 
 // Vaciar el Carrito y limpiar LocalStorage
