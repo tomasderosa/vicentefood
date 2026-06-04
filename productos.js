@@ -3,6 +3,16 @@ const PRODUCTS = [
 
     // Platos
     {
+        id: 24,
+        name: "Bondiola Desmenuzada",
+        price: 9300,
+        category: "platos",
+        tipo: "carne",
+        image: "assets/bondiola_desmechada.jpg",
+        description: "Bondiola desmechada con zanahorias, cebolla y puerro (500 gr)",
+        tags: ["Nuevo", "10-15 min"]
+    },
+    {
         id: 1,
         name: "Pastel de Bondiola y Batata",
         price: 8900,
