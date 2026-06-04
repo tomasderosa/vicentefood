@@ -256,7 +256,7 @@ ul {
 
 .logo img {
     height: 55px;
-    transition: var(--transicion);
+    transition: var(--transition-normal);
 }
 
 .logo-accent {
@@ -1526,6 +1526,10 @@ ul {
 @media (max-width: 768px) {
     section {
         padding: 60px 0;
+    }
+
+    .logo img {
+        height: 40px;
     }
 
     .viandas-section {
