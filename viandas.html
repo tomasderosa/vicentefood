@@ -115,7 +115,12 @@
                             <div class="form-group"><label for="checkoutAddress">Dirección de Entrega *</label>
                                 <div class="input-wrapper"><i data-lucide="map-pin" class="input-icon"></i><input
                                         type="text" id="checkoutAddress" required
-                                        placeholder="Ej: Av. del Libertador 1234, Vicente López"></div>
+                                        placeholder="Ej: Av. del Libertador 1234"></div>
+                            </div>
+                            <div class="form-group"><label for="checkoutCity">Localidad / Partido *</label>
+                                <div class="input-wrapper"><i data-lucide="map" class="input-icon"></i><input
+                                        type="text" id="checkoutCity" required
+                                        placeholder="Ej: San Isidro"></div>
                             </div>
                             <h4 class="mt-2">2. Medio de Pago</h4>
                             <div class="payment-selector">
@@ -124,6 +129,12 @@
                                     <div class="payment-option-content"><i data-lucide="wallet"></i>
                                         <div><strong>Transferencia Bancaria</strong><span>Obtén un 5% de
                                                 descuento</span></div>
+                                    </div>
+                                </label>
+                                <label class="payment-option"><input type="radio" name="paymentMethod"
+                                        value="efectivo">
+                                    <div class="payment-option-content"><i data-lucide="banknote"></i>
+                                        <div><strong>Efectivo</strong><span>Pagas en efectivo al recibir</span></div>
                                     </div>
                                 </label>
                                 <!-- <label class="payment-option"><input type="radio" name="paymentMethod"

@@ -367,6 +367,7 @@ section:not(.hero-section) {
 
 /* Hero Section */
 .hero-section {
+    scroll-margin-top: 80px; /* Offset for fixed header */
     position: relative;
     height: 100vh;
     min-height: 600px;

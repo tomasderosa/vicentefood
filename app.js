@@ -3,7 +3,7 @@ const CONFIG = {
     whatsappNumber: "5491150250623", // Reemplazar con el número del negocio
     contactEmail: "pedidos@vicentefood.com",
     transferDiscount: 0, // Descuento por transferencia
-    workerURL: "https://vicentefood-api.tomas-aderosa.workers.dev"
+    workerURL: "https://vicentefood-api.tomas-aderosa.workers.dev" // vicentefood-api.joaquinpetrocelli.workers.dev/"
 };
 
 // Estado Global de la Aplicación
@@ -180,13 +180,15 @@ function renderProducts() {
                 </button>
             `;
 
+        const typeTagHTML = prod.tipo === 'vegetariano'
+            ? `<span class="vianda-tag veggie">Vegetariano</span>`
+            : '';
+
         const cardHTML = `
             <div class="vianda-card" data-id="${prod.id}">
                 <div class="vianda-img-container">
                     <img src="${prod.image}" alt="${prod.name}" loading="lazy">
-                    <span class="vianda-tag ${prod.tipo === 'vegetariano' ? 'veggie' : ''}">
-                        ${prod.tipo === 'vegetariano' ? 'Vegetariano' : 'Con Carne'}
-                    </span>
+                    ${typeTagHTML}
                 </div>
                 <div class="vianda-content">
                     <h4>${prod.name}</h4>
@@ -648,9 +650,14 @@ function setupEventListeners() {
             if (val === "transferencia") {
                 bankInstructions.classList.remove("hidden");
                 mpInstructions.classList.add("hidden");
-            } else {
+
+            } else if (val === "mercadopago") {
                 bankInstructions.classList.add("hidden");
                 mpInstructions.classList.remove("hidden");
+
+            } else {
+                bankInstructions.classList.add("hidden");
+                mpInstructions.classList.add("hidden");
             }
 
             // Recalcular totales con el descuento si aplica
@@ -767,10 +774,11 @@ async function processCheckoutSubmission(method) {
     const phone = document.getElementById("checkoutPhone").value.trim();
     const email = document.getElementById("checkoutEmail").value.trim();
     const address = document.getElementById("checkoutAddress").value.trim();
+    const city = document.getElementById("checkoutCity").value.trim();
     const paymentVal = document.querySelector('input[name="paymentMethod"]:checked').value;
 
     // Validación
-    if (!name || !lastName || !phone || !email || !address) {
+    if (!name || !lastName || !phone || !email || !address || !city) {
         alert("Por favor, completa todos los datos de envío requeridos.");
         form.reportValidity();
         return;
@@ -806,7 +814,13 @@ async function processCheckoutSubmission(method) {
             `• Envío: Gratis\n` +
             `• TOTAL: $${total.toLocaleString("es-AR")}`;
     } else {
-        paymentMethodDisplay = paymentVal === "transferencia" ? "Transferencia Bancaria" : "Mercado Pago";
+        if (paymentVal === "transferencia") {
+            paymentMethodDisplay = "Transferencia Bancaria";
+        } else if (paymentVal === "efectivo") {
+            paymentMethodDisplay = "Efectivo";
+        } else {
+            paymentMethodDisplay = "Mercado Pago";
+        }
         paymentDetailsText = `• Subtotal: $${subtotal.toLocaleString("es-AR")}\n` +
             `• Envío: Gratis\n` +
             `• TOTAL: $${total.toLocaleString("es-AR")}`;
@@ -821,11 +835,12 @@ async function processCheckoutSubmission(method) {
             fullName: fullName,
             phone: phone,
             email: email,
-            address: address
+            address: address,
+            city: city
         },
 
         payment: {
-            method: paymentVal === "transferencia" ? "Transferencia" : "Mercado Pago",
+            method: paymentVal === "transferencia" ? "Transferencia" : (paymentVal === "efectivo" ? "Efectivo" : "Mercado Pago"),
             methodDisplay: paymentMethodDisplay
         },
 
@@ -867,7 +882,7 @@ async function processCheckoutSubmission(method) {
             `• *Cliente:* ${fullName}\n` +
             `• *Teléfono:* ${phone}\n` +
             `• *Email:* ${email}\n` +
-            `• *Dirección:* ${address}\n\n` +
+            `• *Dirección:* ${address}, ${city}\n\n` +
             `A continuación adjunto el comprobante de la transferencia.`;
 
         const whatsappUrl = `https://api.whatsapp.com/send?phone=${CONFIG.whatsappNumber}&text=${encodeURIComponent(textMessage)}`;
@@ -889,7 +904,7 @@ async function processCheckoutSubmission(method) {
             `- Cliente: ${fullName}\n` +
             `- Teléfono: ${phone}\n` +
             `- Email: ${email}\n` +
-            `- Dirección: ${address}\n\n` +
+            `- Dirección: ${address}, ${city}\n\n` +
             `Quedo a la espera de coordinar la entrega.\n` +
             `Saludos,\n` +
             `${fullName}`;
