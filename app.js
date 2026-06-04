@@ -712,8 +712,13 @@ function processCateringSubmission(method) {
         return;
     }
 
-    // Formatear la fecha a dd/mm/aaaa
+    // Formatear la fecha a dd/mm/aaaa y validar año
     const dateArray = dateVal.split("-");
+    const year = dateArray[0];
+    if (year.length > 4 || parseInt(year) > 2040) {
+        alert("Por favor, ingresa un año válido de 4 dígitos (máximo 2040).");
+        return;
+    }
     const formattedDate = `${dateArray[2]}/${dateArray[1]}/${dateArray[0]}`;
 
     // Formatear Mensajes
