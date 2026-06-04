@@ -1,7 +1,3 @@
-/* ==========================================================================
-   VICENTE FOOD - STYLES
-   ========================================================================== */
-
 /* Variables y Sistema de Diseño */
 :root {
     --bg-primary: #FCFAF6;
@@ -110,6 +106,10 @@ img {
 
 ul {
     list-style: none;
+}
+
+section:not(.hero-section) {
+    scroll-margin-top: 25px;
 }
 
 .flex-center {
@@ -1475,7 +1475,6 @@ ul {
     flex-shrink: 0;
 }
 
-/* Phone link style in footer */
 .footer-phone-link {
     color: rgba(247, 245, 240, 0.7);
     text-decoration: none;
@@ -1493,11 +1492,9 @@ ul {
     color: rgba(247, 245, 240, 0.4);
 }
 
-/* ==========================================================================
-   RESPONSIVE DESIGN (Media Queries)
-   ========================================================================== */
+/* RESPONSIVE DESIGN */
 
-/* Tablets y Pantallas Pequeñas */
+/* Tablets y Pantallas Chicas */
 @media (max-width: 992px) {
     .hero-title {
         font-size: 2.8rem;
@@ -1538,7 +1535,7 @@ ul {
     }
 }
 
-/* Móviles */
+/* Teléfonos */
 @media (max-width: 768px) {
     section {
         padding: 60px 0;
@@ -1653,9 +1650,7 @@ ul {
     }
 }
 
-/* ==========================================================================
-   BOTÓN FLOTANTE DE CONFIRMAR PEDIDO
-   ========================================================================== */
+/* BOTÓN FLOTANTE DE CONFIRMAR PEDIDO */
 .floating-confirm-btn {
     position: fixed;
     bottom: 28px;
@@ -1737,10 +1732,7 @@ ul {
     font-size: 0.95rem;
 }
 
-/* ==========================================================================
-   BOTÓN FLOTANTE DE WHATSAPP
-   ========================================================================== */
-
+/* BOTÓN FLOTANTE DE WHATSAPP */
 .whatsapp-float {
     position: fixed;
     width: 60px;
