@@ -1,60 +1,8 @@
-/* ==========================================================================
-   VICENTE FOOD - APPLICATION LOGIC
-   ========================================================================== */
-
-// Base de Datos de Productos (Viandas Congeladas)
-const PRODUCTS = [
-    {
-        id: 1,
-        name: "Lasaña de Carne y Espinaca",
-        price: 5400,
-        category: "meat",
-        image: "assets/vianda-lasana.png",
-        description: "Láminas de pasta casera rellenas de carne bolognesa cocinada a fuego lento y espinaca fresca, cubiertas de salsa mixta y queso gratinado.",
-        tags: ["Casero", "Alto en Proteínas", "Más Vendido"]
-    },
-    {
-        id: 2,
-        name: "Pastel de Papas Clásico",
-        price: 4900,
-        category: "potato",
-        image: "assets/vianda-pastel-papas.png",
-        description: "Carne vacuna seleccionada salteada con cebolla, morrón, aceitunas y huevo duro picado, cubierta de puré de papas gratinado con queso.",
-        tags: ["Sin TACC", "Receta de la Abuela"]
-    },
-    {
-        id: 3,
-        name: "Wok de Vegetales y Fideos",
-        price: 4500,
-        category: "veggie",
-        image: "assets/vianda-wok-vegetales.png",
-        description: "Fideos de arroz salteados al wok con brócoli, zanahoria, zucchini, cebolla, morrones, cebolla de verdeo y dados de tofu dorado.",
-        tags: ["Vegano", "Bajo en Sodio", "Liviano"]
-    },
-    {
-        id: 4,
-        name: "Pollo con Puré de Calabaza",
-        price: 4800,
-        category: "meat",
-        image: "assets/vianda-pollo-calabaza.png",
-        description: "Suprema de pollo a la plancha marinada con finas hierbas y limón, acompañada de un puré súper cremoso de calabaza asada.",
-        tags: ["Fitness", "Bajo en Grasas", "Saludable"]
-    },
-    {
-        id: 5,
-        name: "Canelones de Verdura Mixtos",
-        price: 4700,
-        category: "veggie",
-        image: "assets/vianda-canelones.png",
-        description: "Panqueques caseros rellenos de espinaca, acelga y ricota condimentada, servidos con salsa de tomate y bechamel con queso fundido.",
-        tags: ["Vegetariano", "Casero"]
-    }
-];
-
 // Configuración de Envío de Pedidos
 const CONFIG = {
     whatsappNumber: "5491123456789", // Reemplazar con el número del negocio (código de país + código de área + número)
-    contactEmail: "pedidos@vicentefood.com"
+    contactEmail: "pedidos@vicentefood.com",
+    transferDiscount: 0 // Descuento por transferencia
 };
 
 // Estado Global de la Aplicación
@@ -87,8 +35,88 @@ function initApp() {
     // Registrar Event Listeners
     setupEventListeners();
 
+    // Actualizar clase activa del menú
+    updateActiveNavLink();
+
+    // Actualizar textos de descuento en interfaz
+    updateTransferDiscountUI();
+
     // Renderizar iconos de Lucide
     lucide.createIcons();
+}
+
+// Actualizar clase activa del menú de navegación basado en la URL/hash actual
+function updateActiveNavLink() {
+    const hash = window.location.hash;
+    const path = window.location.pathname;
+    const navLinks = document.querySelectorAll(".nav-link");
+
+    if (navLinks.length === 0) return;
+
+    // Quitar active a todos
+    navLinks.forEach(link => link.classList.remove("active"));
+
+    let matched = false;
+
+    // 1. Si hay hash en la URL, buscar coincidencia exacta
+    if (hash) {
+        navLinks.forEach(link => {
+            const href = link.getAttribute("href");
+            if (href === hash || href.endsWith(hash)) {
+                link.classList.add("active");
+                matched = true;
+            }
+        });
+    }
+
+    // 2. Si no hubo coincidencia por hash, buscar por nombre de archivo en path
+    if (!matched) {
+        navLinks.forEach(link => {
+            const href = link.getAttribute("href");
+            // Evitar coincidir con anclas vacías o hashes locales
+            if (href && href !== "#" && !href.startsWith("#")) {
+                if (path.includes(href)) {
+                    link.classList.add("active");
+                    matched = true;
+                }
+            }
+        });
+    }
+
+    // 3. Fallbacks si nada coincide
+    if (!matched) {
+        if (path.includes("viandas.html")) {
+            const viandasLink = Array.from(navLinks).find(link => link.getAttribute("href").includes("viandas.html"));
+            if (viandasLink) viandasLink.classList.add("active");
+        } else {
+            // En index.html o raíz, por defecto Inicio
+            const inicioLink = Array.from(navLinks).find(link => link.getAttribute("href") === "#inicio" || link.getAttribute("href").endsWith("#inicio"));
+            if (inicioLink) inicioLink.classList.add("active");
+        }
+    }
+}
+
+// Actualizar textos de descuento por transferencia en la interfaz según CONFIG
+function updateTransferDiscountUI() {
+    const paymentSelector = document.querySelector('.payment-selector');
+    if (!paymentSelector) return;
+
+    const transferInput = paymentSelector.querySelector('input[value="transferencia"]');
+    if (transferInput) {
+        const optionLabel = transferInput.closest('.payment-option');
+        if (optionLabel) {
+            const optionContentSpan = optionLabel.querySelector('.payment-option-content div span');
+            if (optionContentSpan) {
+                const discountRate = CONFIG.transferDiscount;
+                if (discountRate !== null && discountRate > 0) {
+                    optionContentSpan.textContent = `Obtén un ${Math.round(discountRate * 100)}% de descuento`;
+                    optionContentSpan.style.display = "";
+                } else {
+                    optionContentSpan.style.display = "none";
+                }
+            }
+        }
+    }
 }
 
 // Configurar Fecha Mínima en Formulario de Catering
@@ -127,17 +155,36 @@ function renderProducts() {
     }
 
     filteredProducts.forEach(prod => {
-        const tagsHTML = prod.tags.map(tag => {
-            const isVeggie = tag.toLowerCase().includes("veggie") || tag.toLowerCase().includes("vegan");
+        const tagsHTML = (prod.tags || []).map(tag => {
+            const isVeggie = tag.toLowerCase().includes("veggie") || tag.toLowerCase().includes("vegan") || tag.toLowerCase().includes("vegetariano");
             return `<span class="nutri-badge ${isVeggie ? 'veggie' : ''}">${tag}</span>`;
         }).join("");
+
+        const cartItem = cart.find(item => item.product.id === prod.id);
+        const actionButtonHTML = cartItem && cartItem.quantity > 0 
+            ? `
+                <div class="quantity-controller">
+                    <button class="qty-btn" onclick="updateQuantity(${prod.id}, -1)" aria-label="Disminuir cantidad">
+                        <i data-lucide="minus"></i>
+                    </button>
+                    <span class="qty-val">${cartItem.quantity}</span>
+                    <button class="qty-btn" onclick="updateQuantity(${prod.id}, 1)" aria-label="Aumentar cantidad">
+                        <i data-lucide="plus"></i>
+                    </button>
+                </div>
+            `
+            : `
+                <button class="btn-add-cart" onclick="addToCart(${prod.id})" aria-label="Agregar al carrito">
+                    <i data-lucide="plus"></i>
+                </button>
+            `;
 
         const cardHTML = `
             <div class="vianda-card" data-id="${prod.id}">
                 <div class="vianda-img-container">
                     <img src="${prod.image}" alt="${prod.name}" loading="lazy">
-                    <span class="vianda-tag ${prod.category === 'veggie' ? 'veggie' : ''}">
-                        ${prod.category === 'veggie' ? 'Vegetariano' : 'Con Carne'}
+                    <span class="vianda-tag ${prod.tipo === 'vegetariano' ? 'veggie' : ''}">
+                        ${prod.tipo === 'vegetariano' ? 'Vegetariano' : 'Con Carne'}
                     </span>
                 </div>
                 <div class="vianda-content">
@@ -148,9 +195,7 @@ function renderProducts() {
                     </div>
                     <div class="vianda-footer">
                         <span class="vianda-price">$${prod.price.toLocaleString("es-AR")}</span>
-                        <button class="btn-add-cart" onclick="addToCart(${prod.id})" aria-label="Agregar al carrito">
-                            <i data-lucide="plus"></i>
-                        </button>
+                        ${actionButtonHTML}
                     </div>
                 </div>
             </div>
@@ -160,6 +205,67 @@ function renderProducts() {
 
     // Volver a renderizar los iconos dinámicos
     lucide.createIcons();
+}
+
+// Sincronizar las cantidades de las tarjetas de productos sin reconstruir el grid
+function syncProductCardQuantities() {
+    const grid = document.getElementById("viandasGrid");
+    if (!grid) return;
+
+    PRODUCTS.forEach(prod => {
+        const card = grid.querySelector(`.vianda-card[data-id="${prod.id}"]`);
+        if (!card) return;
+
+        const footer = card.querySelector(".vianda-footer");
+        if (!footer) return;
+
+        const cartItem = cart.find(item => item.product.id === prod.id);
+        const hasQuantity = cartItem && cartItem.quantity > 0;
+        const isCurrentlyController = footer.querySelector(".quantity-controller") !== null;
+
+        if (hasQuantity) {
+            if (isCurrentlyController) {
+                // Si ya es un controlador, solo actualizamos el valor de texto
+                const qtyValSpan = footer.querySelector(".qty-val");
+                if (qtyValSpan && qtyValSpan.textContent !== String(cartItem.quantity)) {
+                    qtyValSpan.textContent = cartItem.quantity;
+                }
+            } else {
+                // Reemplazamos el botón "+" por el controlador de cantidad
+                const oldBtn = footer.querySelector(".btn-add-cart");
+                if (oldBtn) oldBtn.remove();
+
+                const controllerHTML = `
+                    <div class="quantity-controller">
+                        <button class="qty-btn" onclick="updateQuantity(${prod.id}, -1)" aria-label="Disminuir cantidad">
+                            <i data-lucide="minus"></i>
+                        </button>
+                        <span class="qty-val">${cartItem.quantity}</span>
+                        <button class="qty-btn" onclick="updateQuantity(${prod.id}, 1)" aria-label="Aumentar cantidad">
+                            <i data-lucide="plus"></i>
+                        </button>
+                    </div>
+                `;
+                footer.insertAdjacentHTML("beforeend", controllerHTML);
+                lucide.createIcons();
+            }
+        } else {
+            // Si no está en el carrito
+            if (isCurrentlyController) {
+                // Reemplazamos el controlador por el botón "+"
+                const oldController = footer.querySelector(".quantity-controller");
+                if (oldController) oldController.remove();
+
+                const btnHTML = `
+                    <button class="btn-add-cart" onclick="addToCart(${prod.id})" aria-label="Agregar al carrito">
+                        <i data-lucide="plus"></i>
+                    </button>
+                `;
+                footer.insertAdjacentHTML("beforeend", btnHTML);
+                lucide.createIcons();
+            }
+        }
+    });
 }
 
 // Agregar Item al Carrito
@@ -253,6 +359,7 @@ function updateCartUI() {
         // Ocultar botón flotante si el carrito está vacío
         const floatingBtnEmpty = document.getElementById('btnFloatingConfirm');
         if (floatingBtnEmpty) floatingBtnEmpty.classList.add('hidden');
+        syncProductCardQuantities();
         lucide.createIcons();
         return;
     }
@@ -300,8 +407,12 @@ function updateCartUI() {
 
     // Mostrar botón flotante cuando el carrito tiene ítems
     const floatingBtn = document.getElementById('btnFloatingConfirm');
-    if (floatingBtn) floatingBtn.classList.remove('hidden');
+    if (floatingBtn) {
+        floatingBtn.classList.remove('hidden');
+        adjustFloatingButtonPosition();
+    }
 
+    syncProductCardQuantities();
     lucide.createIcons();
 }
 
@@ -328,7 +439,10 @@ function closeCartDrawer() {
     }
     // Volver a mostrar botón flotante si el carrito tiene ítems
     const floatingBtn = document.getElementById('btnFloatingConfirm');
-    if (floatingBtn && cart.length > 0) floatingBtn.classList.remove('hidden');
+    if (floatingBtn && cart.length > 0) {
+        floatingBtn.classList.remove('hidden');
+        adjustFloatingButtonPosition();
+    }
 }
 
 // Controladores de Modales (Checkout)
@@ -336,6 +450,9 @@ const checkoutModalOverlay = document.getElementById("checkoutModalOverlay");
 
 function openCheckoutModal() {
     closeCartDrawer();
+    const floatingBtn = document.getElementById('btnFloatingConfirm');
+    if (floatingBtn) floatingBtn.classList.add('hidden');
+
     if (checkoutModalOverlay) {
         checkoutModalOverlay.classList.add("active");
         renderCheckoutSummary();
@@ -343,6 +460,12 @@ function openCheckoutModal() {
 }
 
 function closeCheckoutModal() {
+    const floatingBtn = document.getElementById('btnFloatingConfirm');
+    if (floatingBtn && cart.length > 0) {
+        floatingBtn.classList.remove('hidden');
+        adjustFloatingButtonPosition();
+    }
+
     if (checkoutModalOverlay) {
         checkoutModalOverlay.classList.remove("active");
     }
@@ -379,19 +502,45 @@ function renderCheckoutSummary() {
 
     subtotalText.textContent = `$${subtotal.toLocaleString("es-AR")}`;
 
-    // Validar método de pago activo para el descuento (Transferencia tiene 5% descuento)
+    // Validar método de pago activo para el descuento (Transferencia)
     const activePayment = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const discountRate = CONFIG.transferDiscount;
 
-    if (activePayment === "transferencia") {
-        const discount = Math.round(subtotal * 0.05);
+    if (activePayment === "transferencia" && discountRate !== null && discountRate > 0) {
+        const discount = Math.round(subtotal * discountRate);
         const total = subtotal - discount;
 
         discountRow.classList.add("active");
+        const discountLabel = discountRow.querySelector("span:first-child");
+        if (discountLabel) {
+            discountLabel.textContent = `Descuento Transferencia (${Math.round(discountRate * 100)}%)`;
+        }
         discountText.textContent = `-$${discount.toLocaleString("es-AR")}`;
         totalText.textContent = `$${total.toLocaleString("es-AR")}`;
     } else {
         discountRow.classList.remove("active");
         totalText.textContent = `$${subtotal.toLocaleString("es-AR")}`;
+    }
+}
+
+// Ajustar posición del botón flotante para evitar que se superponga con el footer
+function adjustFloatingButtonPosition() {
+    const btn = document.getElementById("btnFloatingConfirm");
+    if (!btn || btn.classList.contains("hidden")) return;
+
+    const footer = document.querySelector(".main-footer");
+    if (!footer) return;
+
+    const footerRect = footer.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const offset = window.innerWidth <= 600 ? 20 : 28;
+
+    if (footerRect.top < viewportHeight) {
+        // El footer está en el viewport
+        const newBottom = viewportHeight - footerRect.top + offset;
+        btn.style.bottom = `${newBottom}px`;
+    } else {
+        btn.style.bottom = `${offset}px`;
     }
 }
 
@@ -407,7 +556,13 @@ function setupEventListeners() {
                 header.classList.remove("scrolled");
             }
         }
+        adjustFloatingButtonPosition();
     });
+
+    window.addEventListener("resize", adjustFloatingButtonPosition);
+
+    // Evento de cambio de hash
+    window.addEventListener("hashchange", updateActiveNavLink);
 
     // 2. Mobile Menu Toggle
     const mobileMenuBtn = document.getElementById("mobileMenuBtn");
@@ -568,12 +723,13 @@ function processCateringSubmission(method) {
     if (method === "whatsapp") {
         const textMessage = `Hola!\n` +
             `Me gustaría consultar por el servicio de *Catering* para un evento.\n\n` +
-            `*Detalles de la Solicitud:*\n` +
-            `• *Nombre:* ${name}\n` +
-            `• *Teléfono:* ${phone}\n` +
+            `*Detalles del Evento:*\n` +
             `• *Fecha tentativa:* ${formattedDate}\n` +
-            `• *Cantidad de comensales:* ${guests} personas\n` +
-            `• *Detalles:* ${details}\n\n` +
+            `• *Cantidad de invitados:* ${guests} personas\n\n` +
+            `*Detalles:* ${details}\n\n` +
+            `*Datos de Contacto:*\n` +
+            `• *Nombre:* ${name}\n` +
+            `• *Teléfono:* ${phone}\n\n` +
             `Quedo atento a su respuesta para coordinar la propuesta. ¡Muchas gracias!`;
 
         const whatsappUrl = `https://api.whatsapp.com/send?phone=${CONFIG.whatsappNumber}&text=${encodeURIComponent(textMessage)}`;
@@ -583,12 +739,13 @@ function processCateringSubmission(method) {
         const emailBody = `Hola Vicente Food,\n\n` +
             `Me pongo en contacto para consultar por el servicio de catering para mi evento.\n\n` +
             `Detalles del Evento:\n` +
-            `- Nombre: ${name}\n` +
-            `- Teléfono: ${phone}\n` +
             `- Fecha tentativa: ${formattedDate}\n` +
             `- Cantidad de invitados: ${guests} personas\n\n` +
-            `Mensaje / Preferencias del Menú:\n` +
+            `Detalles:\n` +
             `${details}\n\n` +
+            `Datos de Contacto:\n` +
+            `- Nombre: ${name}\n` +
+            `- Teléfono: ${phone}\n\n` +
             `Quedo a la espera de su respuesta.\n` +
             `Saludos cordiales,\n` +
             `${name}`;
@@ -599,18 +756,19 @@ function processCateringSubmission(method) {
 }
 
 // 2. Procesar Formulario de Checkout (Viandas)
-function processCheckoutSubmission(method) {
+async function processCheckoutSubmission(method) {
     const form = document.getElementById("checkoutForm");
 
     // Campos personales
     const name = document.getElementById("checkoutName").value.trim();
     const lastName = document.getElementById("checkoutLastName").value.trim();
     const phone = document.getElementById("checkoutPhone").value.trim();
+    const email = document.getElementById("checkoutEmail").value.trim();
     const address = document.getElementById("checkoutAddress").value.trim();
     const paymentVal = document.querySelector('input[name="paymentMethod"]:checked').value;
 
     // Validación
-    if (!name || !lastName || !phone || !address) {
+    if (!name || !lastName || !phone || !email || !address) {
         alert("Por favor, completa todos los datos de envío requeridos.");
         form.reportValidity();
         return;
@@ -635,19 +793,74 @@ function processCheckoutSubmission(method) {
     let paymentMethodDisplay = "";
     let paymentDetailsText = "";
 
-    if (paymentVal === "transferencia") {
-        const discount = Math.round(subtotal * 0.05);
+    const discountRate = CONFIG.transferDiscount;
+    if (paymentVal === "transferencia" && discountRate !== null && discountRate > 0) {
+        const discount = Math.round(subtotal * discountRate);
         total = subtotal - discount;
-        paymentMethodDisplay = "Transferencia Bancaria (Descuento del 5% Aplicado)";
+        const discountPercentText = `${Math.round(discountRate * 100)}%`;
+        paymentMethodDisplay = `Transferencia Bancaria (Descuento del ${discountPercentText} Aplicado)`;
         paymentDetailsText = `• Subtotal: $${subtotal.toLocaleString("es-AR")}\n` +
-            `• Descuento Transferencia (-5%): -$${discount.toLocaleString("es-AR")}\n` +
+            `• Descuento Transferencia (-${discountPercentText}): -$${discount.toLocaleString("es-AR")}\n` +
+            `• Envío: Gratis\n` +
             `• TOTAL A PAGAR: $${total.toLocaleString("es-AR")}`;
     } else {
-        paymentMethodDisplay = "Mercado Pago";
-        paymentDetailsText = `• TOTAL A PAGAR: $${total.toLocaleString("es-AR")}`;
+        paymentMethodDisplay = paymentVal === "transferencia" ? "Transferencia Bancaria" : "Mercado Pago";
+        paymentDetailsText = `• Subtotal: $${subtotal.toLocaleString("es-AR")}\n` +
+            `• Envío: Gratis\n` +
+            `• TOTAL A PAGAR: $${total.toLocaleString("es-AR")}`;
     }
 
     const fullName = `${name} ${lastName}`;
+
+    const orderData = {
+        customer: {
+            firstName: name,
+            lastName: lastName,
+            fullName: fullName,
+            phone: phone,
+            email: email,
+            address: address
+        },
+
+        payment: {
+            method: paymentVal === "transferencia" ? "Transferencia" : "Mercado Pago",
+            methodDisplay: paymentMethodDisplay
+        },
+
+        pricing: {
+            subtotal: subtotal,
+            total: total
+        },
+
+        items: cart.map(item => ({
+            name: item.product.name,
+            quantity: item.quantity,
+            unitPrice: item.product.price,
+            subtotal: item.product.price * item.quantity
+        })),
+
+        createdAt: new Date().toISOString()
+    };
+
+    try {
+        const response = await fetch(
+            "https://vicentefood-api.tomas-aderosa.workers.dev",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(orderData)
+            }
+        );
+
+        const result = await response.json();
+        console.log(result);
+        alert("Pedido enviado correctamente.");
+    } catch (error) {
+        console.error(error);
+        alert("Error enviando pedido.");
+    }
 
     // Enviar por WhatsApp
     if (method === "whatsapp") {
@@ -661,10 +874,9 @@ function processCheckoutSubmission(method) {
             `*Datos de Envío:*\n` +
             `• *Cliente:* ${fullName}\n` +
             `• *Teléfono:* ${phone}\n` +
+            `• *Email:* ${email}\n` +
             `• *Dirección:* ${address}\n\n` +
-            (paymentVal === "transferencia"
-                ? `*Nota:* Ya realicé la transferencia, en breve envío el comprobante por este medio.`
-                : `*Nota:* Aguardo el enlace o QR de Mercado Pago para realizar el pago.`);
+            `A continuación adjunto el comprobante de la transferencia.`;
 
         const whatsappUrl = `https://api.whatsapp.com/send?phone=${CONFIG.whatsappNumber}&text=${encodeURIComponent(textMessage)}`;
         window.open(whatsappUrl, "_blank");
@@ -684,6 +896,7 @@ function processCheckoutSubmission(method) {
             `Datos de Envío:\n` +
             `- Cliente: ${fullName}\n` +
             `- Teléfono: ${phone}\n` +
+            `- Email: ${email}\n` +
             `- Dirección: ${address}\n\n` +
             `Quedo a la espera de coordinar la entrega.\n` +
             `Saludos,\n` +

@@ -1,6 +1,5 @@
 /* ==========================================================================
-   VICENTE FOOD - SYSTEM STYLES
-   Aesthetic: Warm Culinary Luxury / Modern Premium
+   VICENTE FOOD - STYLES
    ========================================================================== */
 
 /* Variables y Sistema de Diseño */
@@ -251,11 +250,13 @@ ul {
 }
 
 .logo {
-    font-family: var(--font-heading);
-    font-size: 1.6rem;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    height: 55px;
+    transition: var(--transicion);
 }
 
 .logo-accent {
@@ -455,6 +456,25 @@ ul {
 .section-intro-text {
     font-size: 1.05rem;
 }
+
+.delivery-notice-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--brand-secondary-light); /* Fondo salvia translúcido */
+    color: var(--brand-secondary);
+    border: 1px solid rgba(74, 107, 93, 0.2);
+    padding: 8px 20px;
+    border-radius: var(--border-radius-full);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 16px auto 0 auto;
+}
+.delivery-notice-badge i {
+    width: 16px;
+    height: 16px;
+}
+
 
 /* Catering Section */
 .catering-grid {
@@ -673,6 +693,10 @@ ul {
 }
 
 /* Viandas Section */
+.viandas-section {
+    padding-top: 140px;
+}
+
 .viandas-filters {
     display: flex;
     justify-content: center;
@@ -809,7 +833,7 @@ ul {
 }
 
 .vianda-price {
-    font-family: var(--font-heading);
+    font-family: var(--font-body);
     font-size: 1.4rem;
     font-weight: 700;
     color: var(--brand-primary);
@@ -1086,7 +1110,7 @@ ul {
 }
 
 .cart-total-price {
-    font-family: var(--font-heading);
+    font-family: var(--font-body);
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--brand-primary);
@@ -1325,7 +1349,7 @@ ul {
 }
 
 .summary-total span:last-child {
-    font-family: var(--font-heading);
+    font-family: var(--font-body);
     font-size: 1.4rem;
     color: var(--brand-primary) !important;
 }
@@ -1504,6 +1528,34 @@ ul {
         padding: 60px 0;
     }
 
+    .viandas-section {
+        padding-top: 110px;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .viandas-filters {
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding: 4px 24px 12px 24px;
+        margin: 0 -24px 24px -24px;
+        gap: 8px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .viandas-filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-btn {
+        flex-shrink: 0;
+        padding: 8px 18px;
+        font-size: 0.85rem;
+    }
+
     .mobile-menu-btn {
         display: block;
     }
@@ -1626,6 +1678,7 @@ ul {
         opacity: 0;
         transform: translateY(20px) scale(0.9);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -1639,5 +1692,80 @@ ul {
         right: 20px;
         padding: 14px 22px;
         font-size: 0.9rem;
+    }
+}
+
+/* Control de cantidad dentro de la tarjeta de vianda */
+.vianda-footer .quantity-controller {
+    height: 40px;
+    border-radius: var(--border-radius-full);
+}
+
+.vianda-footer .quantity-controller .qty-btn {
+    padding: 10px 14px;
+    height: 100%;
+}
+
+.vianda-footer .quantity-controller .qty-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.vianda-footer .quantity-controller .qty-val {
+    min-width: 28px;
+    font-size: 0.95rem;
+}
+
+/* ==========================================================================
+   BOTÓN FLOTANTE DE WHATSAPP
+   ========================================================================== */
+
+.whatsapp-float {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    bottom: 30px;
+    right: 30px;
+    background-color: #25D366;
+    color: #FFFFFF;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 32px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.whatsapp-float:hover {
+    background-color: #20BA5A;
+    transform: scale(1.1) translateY(-5px);
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+    color: #FFFFFF;
+}
+
+/* Pulse animation effect */
+.whatsapp-float::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #25D366;
+    opacity: 0.7;
+    z-index: -1;
+    animation: whatsapp-pulse 2s infinite;
+}
+
+@keyframes whatsapp-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1.6);
+        opacity: 0;
     }
 }

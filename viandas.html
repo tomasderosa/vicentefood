@@ -24,7 +24,7 @@
     <!-- Header / Navegación -->
     <header class="main-header" id="header">
         <div class="container header-container">
-            <a href="#" class="logo"><span class="logo-accent">Vicente</span>Food</a>
+            <a href="index.html" class="logo"><img src="assets/logo_vicente_azul.png" alt="Vicente Food">
             <nav class="nav-menu" id="navMenu">
                 <a href="index.html#inicio" class="nav-link">Inicio</a>
                 <a href="index.html#catering" class="nav-link">Catering</a>
@@ -43,21 +43,24 @@
     <section class="viandas-section" id="viandas">
         <div class="container">
             <div class="section-header">
-                <span class="section-subtitle">Viandas Congeladas</span>
                 <h2 class="section-title">Comida de Hogar, Lista en Minutos</h2>
                 <p class="section-intro-text">Nuestras viandas se cocinan con ingredientes frescos de estación y se
                     congelan mediante un proceso rápido que preserva texturas, sabores y nutrientes sin añadir aditivos
                     ni conservantes.</p>
+                <div class="delivery-notice-badge">
+                    <i data-lucide="map-pin"></i>
+                    <span>Envíos a domicilio en <strong>CABA y GBA Norte</strong></span>
+                </div>
                 <div class="section-divider"></div>
             </div>
             <div class="viandas-filters">
-                <button class="filter-btn active" data-filter="all">Todas</button>
-                <button class="filter-btn" data-filter="meat">Carnes</button>
-                <button class="filter-btn" data-filter="potato">Papa</button>
-                <button class="filter-btn" data-filter="veggie">Vegetarianas</button>
+                <button class="filter-btn active" data-filter="all">Todos</button>
+                <button class="filter-btn" data-filter="platos">Platos</button>
+                <button class="filter-btn" data-filter="tartas">Tartas</button>
+                <button class="filter-btn" data-filter="pizzas">Pizzas</button>
+                <button class="filter-btn" data-filter="otros">Otros</button>
             </div>
             <div class="viandas-grid" id="viandasGrid">
-                <!-- Se cargará dinámicamente con JavaScript -->
             </div>
         </div>
     </section>
@@ -103,6 +106,11 @@
                                         type="tel" id="checkoutPhone" required
                                         placeholder="Ej: 11 2345 6789 (Sin el 0 ni el 15)"></div>
                             </div>
+                            <div class="form-group"><label for="checkoutEmail">Email *</label>
+                                <div class="input-wrapper"><i data-lucide="mail" class="input-icon"></i><input
+                                        type="email" id="checkoutEmail" required
+                                        placeholder="Ej: juan.perez@email.com"></div>
+                            </div>
                             <div class="form-group"><label for="checkoutAddress">Dirección de Entrega *</label>
                                 <div class="input-wrapper"><i data-lucide="map-pin" class="input-icon"></i><input
                                         type="text" id="checkoutAddress" required
@@ -117,12 +125,12 @@
                                                 descuento</span></div>
                                     </div>
                                 </label>
-                                <label class="payment-option"><input type="radio" name="paymentMethod"
+                                <!-- <label class="payment-option"><input type="radio" name="paymentMethod"
                                         value="mercadopago">
                                     <div class="payment-option-content"><i data-lucide="credit-card"></i>
                                         <div><strong>Mercado Pago</strong><span>Dinero en cuenta o tarjeta</span></div>
                                     </div>
-                                </label>
+                                </label> -->
                             </div>
                         </form>
                     </div>
@@ -133,7 +141,8 @@
                             <div class="summary-divider"></div>
                             <div class="summary-row"><span>Subtotal</span><span id="summarySubtotal">$0</span></div>
                             <div class="summary-row text-success discount-row" id="summaryDiscountRow"><span>Descuento
-                                    Transferencia (5%)</span><span id="summaryDiscount">-$0</span></div>
+                                    Transferencia</span><span id="summaryDiscount">-$0</span></div>
+                            <div class="summary-row"><span>Envío</span><span class="text-success" style="font-weight: 600;">Gratis</span></div>
                             <div class="summary-row summary-total"><span>Total a pagar</span><span
                                     id="summaryTotal">$0</span></div>
                         </div>
@@ -141,10 +150,10 @@
                             <h5>Datos de Transferencia:</h5>
                             <p>Realiza la transferencia al siguiente CBU/Alias y envía el comprobante:</p>
                             <ul>
-                                <li><strong>Banco:</strong> Banco Galicia</li>
-                                <li><strong>CBU:</strong> 0070000000000000000000</li>
-                                <li><strong>Alias:</strong> vicente.food.galicia</li>
-                                <li><strong>Titular:</strong> Vicente Food S.A.</li>
+                                <li><strong>Banco:</strong> Mercado Pago</li>
+                                <!-- <li><strong>CBU:</strong> 0070000000000000000000</li> -->
+                                <li><strong>Alias:</strong> vicente.food</li>
+                                <li><strong>Titular:</strong> Joaquín Petrocelli</li>
                             </ul>
                         </div>
                         <div class="payment-instructions card hidden" id="mercadoPagoInstructions">
@@ -158,8 +167,8 @@
             <div class="modal-footer">
                 <button type="button" id="btnConfirmWhatsApp" class="btn btn-whatsapp flex-center btn-block"><i
                         data-lucide="send" class="btn-icon"></i> Confirmar y enviar por WhatsApp</button>
-                <button type="button" id="btnConfirmEmail" class="btn btn-outline flex-center btn-block mt-1"><i
-                        data-lucide="mail" class="btn-icon"></i> Confirmar y enviar por Email</button>
+                <!-- <button type="button" id="btnConfirmEmail" class="btn btn-outline flex-center btn-block mt-1"><i
+                        data-lucide="mail" class="btn-icon"></i> Confirmar y enviar por Email</button> -->
             </div>
         </div>
     </div>
@@ -168,24 +177,27 @@
     <footer class="main-footer">
         <div class="container footer-grid">
             <div class="footer-brand">
-                <a href="#" class="logo text-white"><span class="logo-accent">Vicente</span>Food</a>
-                <p class="footer-desc mt-1">Cocina casera de alta gama. Servicios gastronómicos a medida y viandas
-                    congeladas listas para comer sano y sabroso todos los días.</p>
-                <div class="social-links mt-2"><a href="https://www.instagram.com/vicente.food/" target="_blank"
-                        aria-label="Visítanos en Instagram"><i class="fa-brands fa-instagram"></i></a></div>
+                <a href="index.html" class="logo"><img src="assets/logo_vicente_blanco.png" alt="Vicente Food"></a>
+                <p class="footer-desc mt-1">Servicios gastronómicos a medida y viandas
+                    congeladas listas para comer sano y rico todos los días.</p>
+                <div class="social-links mt-2">
+                    <a href="https://www.instagram.com/vicente.food/" target="_blank"
+                        aria-label="Visítanos en Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://wa.link/ye3ua2" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
             </div>
             <div class="footer-nav">
                 <h4>Enlaces Rápidos</h4>
                 <ul>
-                    <li><a href="#inicio">Inicio</a></li>
-                    <li><a href="#catering">Catering</a></li>
+                    <li><a href="index.html#inicio">Inicio</a></li>
+                    <li><a href="index.html#catering">Catering</a></li>
                     <li><a href="viandas.html">Viandas Congeladas</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
                 <h4>Contacto</h4>
                 <ul>
-                    <li><i data-lucide="phone" class="footer-icon"></i><span>+54 9 11 2345-6789</span></li>
+                    <li><i data-lucide="phone" class="footer-icon"></i><span>+54 9 11 5025-0623</span></li>
                     <li><i data-lucide="mail" class="footer-icon"></i><span>pedidos@vicentefood.com</span></li>
                     <li><i data-lucide="clock" class="footer-icon"></i><span>Atención de pedidos: Lun a Sáb 9:00 a 19:00
                             hs</span></li>
@@ -205,6 +217,7 @@
     </button>
 
     <!-- JavaScript Bundle -->
+    <script src="productos.js"></script>
     <script src="app.js"></script>
 </body>
 
