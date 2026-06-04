@@ -256,6 +256,8 @@ ul {
 
 .logo img {
     height: 55px;
+    width: auto;
+    max-width: 200px;
     transition: var(--transition-normal);
 }
 
@@ -1530,6 +1532,7 @@ ul {
 
     .logo img {
         height: 40px;
+        max-width: 150px;
     }
 
     .viandas-section {
