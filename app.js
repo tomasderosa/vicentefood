@@ -783,7 +783,7 @@ async function processCheckoutSubmission(method) {
     cart.forEach(item => {
         const itemSubtotal = item.product.price * item.quantity;
         subtotal += itemSubtotal;
-        itemsText += `• ${item.quantity}x ${item.product.name} ($${item.product.price.toLocaleString("es-AR")} c/u) - Subtotal: $${itemSubtotal.toLocaleString("es-AR")}\n`;
+        itemsText += `• ${item.quantity}x ${item.product.name} ($${item.product.price.toLocaleString("es-AR")} c/u)\n`;
     });
 
     let total = subtotal;
@@ -799,12 +799,12 @@ async function processCheckoutSubmission(method) {
         paymentDetailsText = `• Subtotal: $${subtotal.toLocaleString("es-AR")}\n` +
             `• Descuento Transferencia (-${discountPercentText}): -$${discount.toLocaleString("es-AR")}\n` +
             `• Envío: Gratis\n` +
-            `• TOTAL A PAGAR: $${total.toLocaleString("es-AR")}`;
+            `• TOTAL: $${total.toLocaleString("es-AR")}`;
     } else {
         paymentMethodDisplay = paymentVal === "transferencia" ? "Transferencia Bancaria" : "Mercado Pago";
         paymentDetailsText = `• Subtotal: $${subtotal.toLocaleString("es-AR")}\n` +
             `• Envío: Gratis\n` +
-            `• TOTAL A PAGAR: $${total.toLocaleString("es-AR")}`;
+            `• TOTAL: $${total.toLocaleString("es-AR")}`;
     }
 
     const fullName = `${name} ${lastName}`;
@@ -852,11 +852,11 @@ async function processCheckoutSubmission(method) {
     // Enviar por WhatsApp
     if (method === "whatsapp") {
         const textMessage = `Hola Vicente Food!\n` +
-            `Quiero realizar un pedido de *Viandas Congeladas*.\n\n` +
+            `Quiero realizar un pedido de *Viandas Congeladas*:\n\n` +
             `*Detalles del Pedido:*\n` +
             `${itemsText}\n` +
             `*Resumen del Pago:*\n` +
-            `• *Medio de Pago:* ${paymentMethodDisplay}\n` +
+            `• Medio de Pago: ${paymentMethodDisplay}\n` +
             `${paymentDetailsText}\n\n` +
             `*Datos de Envío:*\n` +
             `• *Cliente:* ${fullName}\n` +
