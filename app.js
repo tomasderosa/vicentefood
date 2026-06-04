@@ -856,7 +856,7 @@ async function processCheckoutSubmission(method) {
 
         const result = await response.json();
         console.log(result);
-        alert("Pedido enviado correctamente.");
+        // alert("Pedido enviado correctamente.");
     } catch (error) {
         console.error(error);
         alert("Error enviando pedido.");
