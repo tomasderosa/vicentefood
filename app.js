@@ -3,7 +3,7 @@ const CONFIG = {
     whatsappNumber: "5491150250623", // Reemplazar con el número del negocio
     contactEmail: "pedidos@vicentefood.com",
     transferDiscount: 0, // Descuento por transferencia
-    workerURL: "https://vicentefood-api.joaquinpetrocelli.workers.dev"
+    workerURL: "https://vicentefood-api.joaquinpetrocelli.workers.dev/"
 };
 
 // Estado Global de la Aplicación
@@ -20,7 +20,18 @@ function initApp() {
     const savedCart = localStorage.getItem("vicente_food_cart");
     if (savedCart) {
         try {
-            cart = JSON.parse(savedCart);
+            const tempCart = JSON.parse(savedCart);
+            // Sincronizar con los datos reales y vigentes de PRODUCTS
+            cart = tempCart.map(item => {
+                const freshProduct = PRODUCTS.find(p => p.id === item.product.id);
+                if (freshProduct) {
+                    return {
+                        product: freshProduct,
+                        quantity: item.quantity
+                    };
+                }
+                return null;
+            }).filter(item => item !== null);
         } catch (e) {
             cart = [];
         }
@@ -253,7 +264,11 @@ function syncProductCardQuantities() {
                     </div>
                 `;
                 footer.insertAdjacentHTML("beforeend", controllerHTML);
-                lucide.createIcons();
+                lucide.createIcons({
+                    attrs: { class: 'lucide' },
+                    nameAttr: 'data-lucide',
+                    nodeList: footer.querySelectorAll('[data-lucide]')
+                });
             }
         } else {
             // Si no está en el carrito
@@ -268,7 +283,11 @@ function syncProductCardQuantities() {
                     </button>
                 `;
                 footer.insertAdjacentHTML("beforeend", btnHTML);
-                lucide.createIcons();
+                lucide.createIcons({
+                    attrs: { class: 'lucide' },
+                    nameAttr: 'data-lucide',
+                    nodeList: footer.querySelectorAll('[data-lucide]')
+                });
             }
         }
     });
@@ -366,7 +385,13 @@ function updateCartUI() {
         const floatingBtnEmpty = document.getElementById('btnFloatingConfirm');
         if (floatingBtnEmpty) floatingBtnEmpty.classList.add('hidden');
         syncProductCardQuantities();
-        lucide.createIcons();
+        if (container) {
+            lucide.createIcons({
+                attrs: { class: 'lucide' },
+                nameAttr: 'data-lucide',
+                nodeList: container.querySelectorAll('[data-lucide]')
+            });
+        }
         return;
     }
 
@@ -424,7 +449,13 @@ function updateCartUI() {
     }
 
     syncProductCardQuantities();
-    lucide.createIcons();
+    if (container) {
+        lucide.createIcons({
+            attrs: { class: 'lucide' },
+            nameAttr: 'data-lucide',
+            nodeList: container.querySelectorAll('[data-lucide]')
+        });
+    }
 }
 
 // Controladores del Sidebar del Carrito
@@ -512,7 +543,8 @@ function renderCheckoutSummary() {
     subtotalText.textContent = `$${subtotal.toLocaleString("es-AR")}`;
 
     // Validar método de pago activo para el descuento (Transferencia)
-    const activePayment = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const activePaymentElement = document.querySelector('input[name="paymentMethod"]:checked');
+    const activePayment = activePaymentElement ? activePaymentElement.value : "transferencia";
     const discountRate = CONFIG.transferDiscount;
 
     if (activePayment === "transferencia" && discountRate !== null && discountRate > 0) {
@@ -547,8 +579,8 @@ function setupFloatingButtonObserver() {
             }
         });
     }, {
-        root: null, // viewport
-        threshold: 0 // se dispara en cuanto el footer entra en pantalla
+        root: null,
+        threshold: 0
     });
 
     observer.observe(footer);
@@ -579,7 +611,11 @@ function setupEventListeners() {
             navMenu.classList.toggle("active");
             const isOpened = navMenu.classList.contains("active");
             mobileMenuBtn.innerHTML = isOpened ? `<i data-lucide="x"></i>` : `<i data-lucide="menu"></i>`;
-            lucide.createIcons();
+            lucide.createIcons({
+                attrs: { class: 'lucide' },
+                nameAttr: 'data-lucide',
+                nodeList: mobileMenuBtn.querySelectorAll('[data-lucide]')
+            });
         });
     }
 
@@ -595,7 +631,11 @@ function setupEventListeners() {
                 navMenu.classList.remove("active");
                 if (mobileMenuBtn) {
                     mobileMenuBtn.innerHTML = `<i data-lucide="menu"></i>`;
-                    lucide.createIcons();
+                    lucide.createIcons({
+                        attrs: { class: 'lucide' },
+                        nameAttr: 'data-lucide',
+                        nodeList: mobileMenuBtn.querySelectorAll('[data-lucide]')
+                    });
                 }
             }
         });
@@ -779,7 +819,8 @@ async function processCheckoutSubmission(method) {
     const email = document.getElementById("checkoutEmail").value.trim();
     const address = document.getElementById("checkoutAddress").value.trim();
     const city = document.getElementById("checkoutCity").value.trim();
-    const paymentVal = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const paymentValElement = document.querySelector('input[name="paymentMethod"]:checked');
+    const paymentVal = paymentValElement ? paymentValElement.value : "transferencia";
 
     // Validación
     if (!name || !lastName || !phone || !email || !address || !city) {
@@ -923,8 +964,7 @@ async function processCheckoutSubmission(method) {
         console.log(result);
         alert("Pedido enviado correctamente.");
     } catch (error) {
-        console.error(error);
-        //alert("Error enviando pedido.");
+        console.log("Error enviando pedido:", error);
     }
 
     // Post-envío: Vaciar carrito y cerrar modales
