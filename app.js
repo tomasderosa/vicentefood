@@ -3,7 +3,7 @@ const CONFIG = {
     whatsappNumber: "5491150250623", // Reemplazar con el número del negocio
     contactEmail: "pedidos@vicentefood.com",
     transferDiscount: 0, // Descuento por transferencia
-    workerURL: "https://vicentefood-api.tomas-aderosa.workers.dev" // vicentefood-api.joaquinpetrocelli.workers.dev/"
+    workerURL: "https://vicentefood-api.joaquinpetrocelli.workers.dev"
 };
 
 // Estado Global de la Aplicación
@@ -35,6 +35,9 @@ function initApp() {
 
     // Registrar Event Listeners
     setupEventListeners();
+
+    // Configurar IntersectionObserver para el botón flotante
+    setupFloatingButtonObserver();
 
     // Actualizar clase activa del menú
     updateActiveNavLink();
@@ -411,8 +414,13 @@ function updateCartUI() {
     // Mostrar botón flotante cuando el carrito tiene ítems
     const floatingBtn = document.getElementById('btnFloatingConfirm');
     if (floatingBtn) {
-        floatingBtn.classList.remove('hidden');
-        adjustFloatingButtonPosition();
+        const isCartOpen = cartDrawer && cartDrawer.classList.contains("active");
+        const isCheckoutOpen = checkoutModalOverlay && checkoutModalOverlay.classList.contains("active");
+        if (isCartOpen || isCheckoutOpen) {
+            floatingBtn.classList.add('hidden');
+        } else {
+            floatingBtn.classList.remove('hidden');
+        }
     }
 
     syncProductCardQuantities();
@@ -444,7 +452,6 @@ function closeCartDrawer() {
     const floatingBtn = document.getElementById('btnFloatingConfirm');
     if (floatingBtn && cart.length > 0) {
         floatingBtn.classList.remove('hidden');
-        adjustFloatingButtonPosition();
     }
 }
 
@@ -466,7 +473,6 @@ function closeCheckoutModal() {
     const floatingBtn = document.getElementById('btnFloatingConfirm');
     if (floatingBtn && cart.length > 0) {
         floatingBtn.classList.remove('hidden');
-        adjustFloatingButtonPosition();
     }
 
     if (checkoutModalOverlay) {
@@ -526,25 +532,26 @@ function renderCheckoutSummary() {
     }
 }
 
-// Ajustar posición del botón flotante para evitar que se superponga con el footer
-function adjustFloatingButtonPosition() {
+// Configurar el IntersectionObserver para el botón flotante
+function setupFloatingButtonObserver() {
     const btn = document.getElementById("btnFloatingConfirm");
-    if (!btn || btn.classList.contains("hidden")) return;
-
     const footer = document.querySelector(".main-footer");
-    if (!footer) return;
+    if (!btn || !footer) return;
 
-    const footerRect = footer.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const offset = window.innerWidth <= 600 ? 20 : 28;
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                btn.classList.add("at-footer");
+            } else {
+                btn.classList.remove("at-footer");
+            }
+        });
+    }, {
+        root: null, // viewport
+        threshold: 0 // se dispara en cuanto el footer entra en pantalla
+    });
 
-    if (footerRect.top < viewportHeight) {
-        // El footer está en el viewport
-        const newBottom = viewportHeight - footerRect.top + offset;
-        btn.style.bottom = `${newBottom}px`;
-    } else {
-        btn.style.bottom = `${offset}px`;
-    }
+    observer.observe(footer);
 }
 
 // Configurar los Event Listeners
@@ -559,10 +566,7 @@ function setupEventListeners() {
                 header.classList.remove("scrolled");
             }
         }
-        adjustFloatingButtonPosition();
     });
-
-    window.addEventListener("resize", adjustFloatingButtonPosition);
 
     // Evento de cambio de hash
     window.addEventListener("hashchange", updateActiveNavLink);
