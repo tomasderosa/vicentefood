@@ -189,7 +189,7 @@ function renderProducts() {
         }).join("");
 
         const cartItem = cart.find(item => item.product.id === prod.id);
-        const actionButtonHTML = cartItem && cartItem.quantity > 0 
+        const actionButtonHTML = cartItem && cartItem.quantity > 0
             ? `
                 <div class="quantity-controller">
                     <button class="qty-btn" onclick="updateQuantity(${prod.id}, -1)" aria-label="Disminuir cantidad">
@@ -737,18 +737,12 @@ function setupEventListeners() {
         });
     }
 
-    // 8. Order Checkout Buttons (WhatsApp y Email)
+    // 8. Order Checkout Buttons (WhatsApp)
     const btnConfirmWhatsApp = document.getElementById("btnConfirmWhatsApp");
-    const btnConfirmEmail = document.getElementById("btnConfirmEmail");
 
     if (btnConfirmWhatsApp) {
         btnConfirmWhatsApp.addEventListener("click", () => {
-            processCheckoutSubmission("whatsapp");
-        });
-    }
-    if (btnConfirmEmail) {
-        btnConfirmEmail.addEventListener("click", () => {
-            processCheckoutSubmission("email");
+            processCheckoutSubmission();
         });
     }
 }
@@ -822,7 +816,7 @@ function processCateringSubmission(method) {
 }
 
 // 2. Procesar Formulario de Checkout (Viandas)
-async function processCheckoutSubmission(method) {
+async function processCheckoutSubmission() {
     const form = document.getElementById("checkoutForm");
 
     // Campos personales
@@ -861,9 +855,7 @@ async function processCheckoutSubmission(method) {
             id: item.product.id,
             quantity: item.quantity
         })),
-        sendWhatsapp: method === "whatsapp",
-        whatsappNumber: CONFIG.whatsappNumber,
-        contactEmail: CONFIG.contactEmail
+        whatsappNumber: CONFIG.whatsappNumber
     };
 
     try {
@@ -881,10 +873,8 @@ async function processCheckoutSubmission(method) {
 
         const result = await response.json();
 
-        if (payload.sendWhatsapp && result.whatsappUrl) {
+        if (result.whatsappUrl) {
             window.open(result.whatsappUrl, "_blank");
-        } else if (!payload.sendWhatsapp && result.emailUrl) {
-            window.location.href = result.emailUrl;
         }
 
         alert("¡Pedido procesado con éxito!");
@@ -892,7 +882,14 @@ async function processCheckoutSubmission(method) {
         closeCheckoutModal();
     } catch (error) {
         console.error("Error enviando pedido:", error);
+        
+        // Si el worker falla se envía el pedido por whatsapp
         alert("Hubo un problema al procesar tu pedido. Por favor, ponete en contacto con Vicente Food.");
+        const fallbackUrl = generateFallbackWhatsappUrl(payload);
+        window.open(fallbackUrl, "_blank");
+        
+        clearCart();
+        closeCheckoutModal();
     }
 }
 
@@ -902,4 +899,61 @@ function clearCart() {
     cart = [];
     saveCart();
     updateCartUI();
+}
+
+// Fallback: Generador local de WhatsApp en caso de que la API falle
+function generateFallbackWhatsappUrl(payload) {
+    let subtotal = 0;
+    let itemsText = "";
+
+    // Usamos el array 'cart' global
+    for (const item of cart) {
+        const prod = item.product;
+        const itemSubtotal = prod.price * item.quantity;
+        subtotal += itemSubtotal;
+        itemsText += `• ${item.quantity}x ${prod.name} ($${prod.price.toLocaleString("es-AR")} c/u)\n`;
+    }
+
+    let total = subtotal;
+    let discountRate = CONFIG.transferDiscount || 0;
+    let paymentMethodDisplay = "";
+    let paymentDetailsText = "";
+
+    if (payload.paymentMethod === "transferencia" && discountRate > 0) {
+        const discount = Math.round(subtotal * discountRate);
+        total = subtotal - discount;
+        const discountPercentText = `${Math.round(discountRate * 100)}%`;
+        paymentMethodDisplay = `Transferencia Bancaria (Descuento del ${discountPercentText} Aplicado)`;
+        paymentDetailsText = `• Subtotal: $${subtotal.toLocaleString("es-AR")}\n` +
+            `• Descuento Transferencia (-${discountPercentText}): -$${discount.toLocaleString("es-AR")}\n` +
+            `• Envío: Gratis\n` +
+            `• TOTAL: $${total.toLocaleString("es-AR")}`;
+    } else {
+        if (payload.paymentMethod === "transferencia") {
+            paymentMethodDisplay = "Transferencia Bancaria";
+        } else if (payload.paymentMethod === "efectivo") {
+            paymentMethodDisplay = "Efectivo";
+        } else {
+            paymentMethodDisplay = "Mercado Pago";
+        }
+        paymentDetailsText = `• Subtotal: $${subtotal.toLocaleString("es-AR")}\n` +
+            `• Envío: Gratis\n` +
+            `• TOTAL: $${total.toLocaleString("es-AR")}`;
+    }
+
+    const { customer } = payload;
+    const fullName = `${customer.firstName} ${customer.lastName}`;
+
+    const text = `¡Hola! Quiero confirmar mi pedido.\n\n` +
+        `*Detalle del Pedido:*\n${itemsText}\n` +
+        `*Método de Pago:*\n${paymentMethodDisplay}\n\n` +
+        `*Resumen de Pago:*\n${paymentDetailsText}\n\n` +
+        `*Mis Datos:*\n` +
+        `• Nombre: ${fullName}\n` +
+        `• Dirección: ${customer.address}\n` +
+        `• Ciudad: ${customer.city}\n` +
+        `• Teléfono: ${customer.phone}\n` +
+        `• Email: ${customer.email}`;
+
+    return `https://wa.me/${payload.whatsappNumber}?text=${encodeURIComponent(text)}`;
 }
