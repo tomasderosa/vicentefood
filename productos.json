@@ -1,6 +1,6 @@
 {
   "config": {
-    "transferDiscount": 0
+    "transferDiscount": 0.1
   },
   "products": [
     {
